@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FUSE | Fire NOC Desk</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0F1E2E;--ink2:#1B3148;--paper:#E8EDF2;--card:#F8FAFC;--line:#C9D3DD;--steel:#566676;--red:#D7263D;--amber:#E89A00;--pine:#1E7B5C;--r:14px}
+*{box-sizing:border-box;margin:0}
+body{font-family:'Public Sans','Segoe UI',system-ui,sans-serif;background:var(--paper);color:var(--ink);min-height:100vh}
+h1,h2,h3,.disp{font-family:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;letter-spacing:-.02em}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.hide{display:none!important}
+/* login */
+#login{display:grid;grid-template-columns:1.25fr 1fr;min-height:100vh}
+.hero{background:var(--ink);color:#EAF0F6;padding:56px 64px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.hero svg.plan{position:absolute;inset:0;width:100%;height:100%;opacity:.16}
+.hero>*{position:relative}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:22px}
+.brand i{width:14px;height:14px;border-radius:50%;background:var(--red);box-shadow:0 0 0 5px rgba(215,38,61,.25)}
+.hero h1{font-size:clamp(38px,4.6vw,64px);line-height:1.02;font-weight:800;max-width:15ch}
+.hero p{max-width:44ch;margin-top:18px;color:#9FB2C5;line-height:1.55}
+.fusedemo{margin-top:40px;max-width:520px}
+.fusedemo .lbl{display:flex;justify-content:space-between;font-size:13px;color:#9FB2C5;margin-bottom:8px}
+.track{height:10px;border-radius:99px;background:#26405A;position:relative}
+.burn{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,var(--amber),var(--red))}
+.burn::after{content:"";position:absolute;right:-7px;top:50%;width:14px;height:14px;margin-top:-7px;border-radius:50%;background:#FFD27A;box-shadow:0 0 14px 5px rgba(255,160,40,.7)}
+.hero .burn{animation:run 9s ease-in-out infinite alternate}
+@keyframes run{from{width:12%}to{width:88%}}
+.login-side{display:flex;align-items:center;justify-content:center;padding:40px}
+.login-side form{width:100%;max-width:380px}
+.login-side h2{font-size:30px;font-weight:700}
+.login-side .sub{color:var(--steel);margin:6px 0 26px}
+label{display:block;font-size:13px;font-weight:600;margin:16px 0 6px}
+input,select{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;background:#fff;font:inherit;color:var(--ink)}
+.btn{width:100%;margin-top:26px;padding:14px;border:0;border-radius:10px;background:var(--red);color:#fff;font-weight:600;font-size:16px}
+.btn:hover{background:#B81E32}
+.note{margin-top:18px;font-size:12.5px;color:var(--steel);line-height:1.5}
+/* desk */
+#desk{display:grid;grid-template-columns:76px 1fr;min-height:100vh}
+nav{background:var(--ink);display:flex;flex-direction:column;align-items:center;padding:22px 0;gap:22px;color:#9FB2C5}
+nav .dot{width:16px;height:16px;border-radius:50%;background:var(--red);box-shadow:0 0 0 6px rgba(215,38,61,.25)}
+nav button{background:none;border:0;color:inherit;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:5px}
+nav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8}
+nav .on{color:#fff}
+main{padding:26px 32px;display:grid;grid-template-columns:minmax(380px,1.05fr) 1.2fr;gap:26px;align-items:start}
+.top{grid-column:1/-1;display:flex;justify-content:space-between;align-items:flex-end;gap:20px}
+.top h2{font-size:30px;font-weight:800}
+.top small{color:var(--steel);font-size:14px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab{border:1.5px solid var(--line);background:transparent;border-radius:99px;padding:7px 14px;font-size:13.5px;font-weight:500;color:var(--steel)}
+.tab b{margin-left:6px;font-weight:700}
+.tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.board{display:flex;flex-direction:column;gap:12px}
+.row{background:var(--card);border:1.5px solid transparent;border-radius:var(--r);padding:16px 18px;text-align:left;width:100%;transition:border-color .15s,transform .15s}
+.row:hover{border-color:var(--line)}
+.row.sel{border-color:var(--ink);background:#fff}
+.row .h{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.row .n{font-weight:600;font-size:15.5px}
+.row .s{color:var(--steel);font-size:13px;margin-top:2px}
+.days{font-family:'Bricolage Grotesque',system-ui;font-weight:800;font-size:20px;white-space:nowrap}
+.days small{font-size:12px;font-weight:500;color:var(--steel);margin-left:3px}
+.row .track{margin-top:14px;background:#DCE3EA}
+.crit .burn{background:linear-gradient(90deg,var(--amber),var(--red))}
+.watch .burn{background:linear-gradient(90deg,#F6C453,var(--amber))}
+.ok .burn,.done .burn{background:linear-gradient(90deg,#6FC3A3,var(--pine))}
+.ok .burn::after,.done .burn::after{background:#BFEBD8;box-shadow:0 0 10px 3px rgba(60,170,130,.5)}
+.crit .days{color:var(--red)}
+.detail{background:var(--card);border-radius:20px;padding:28px;position:sticky;top:20px}
+.detail h3{font-size:26px;font-weight:800;line-height:1.1}
+.meta{color:var(--steel);margin:6px 0 20px;font-size:14px}
+.pill{display:inline-block;padding:4px 11px;border-radius:99px;font-size:12.5px;font-weight:600;color:#fff}
+.pill.crit{background:var(--red)}.pill.watch{background:var(--amber)}.pill.ok,.pill.done{background:var(--pine)}
+.sec{margin-top:22px}
+.sec h4{font-size:14px;font-weight:700;margin-bottom:10px}
+.why{background:var(--ink);color:#DCE7F1;border-radius:12px;padding:14px 16px 14px 18px;font-size:14px;line-height:1.55}
+.why li{margin-left:16px;margin-top:4px}
+.why .sc{font-family:'Bricolage Grotesque',system-ui;font-weight:800;font-size:15px;color:#FFD27A;margin-bottom:4px;display:block}
+.chk{list-style:none;padding:0}
+.chk li{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.chk li:last-child{border:0}
+.tick{width:20px;height:20px;border-radius:6px;display:grid;place-items:center;font-size:13px;color:#fff;flex:none}
+.tick.y{background:var(--pine)}.tick.n{background:#fff;border:2px dashed var(--red);color:var(--red)}
+.acts{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+.acts button{padding:12px 18px;border-radius:10px;font-weight:600;border:1.5px solid var(--ink);background:transparent;color:var(--ink)}
+.acts .pri{background:var(--ink);color:#fff}
+.acts button:disabled{opacity:.4;cursor:not-allowed}
+.hint{font-size:12.5px;color:var(--steel);margin-top:8px}
+.nudge{display:flex;gap:6px;margin-top:6px}
+.nudge span{flex:1;font-size:12px;color:var(--steel);border-top:3px solid var(--line);padding-top:6px}
+.nudge span.fired{border-color:var(--amber);color:var(--ink);font-weight:600}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none}
+#toast.show{opacity:1}
+
+main.single{display:block;max-width:1120px}main.single .top{margin-bottom:20px}
+.panel{background:var(--card);border-radius:18px;padding:22px 24px;margin-bottom:20px}
+.panel h4{font-size:16px;font-weight:700;margin-bottom:4px}
+.bars{display:flex;gap:6px;align-items:flex-end;height:150px;margin-top:18px}
+.bar{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;font-size:11px;color:var(--steel)}
+.bar i{display:block;width:100%;min-height:4px;border-radius:5px 5px 0 0}
+.bar i.r{background:var(--red)}.bar i.a{background:var(--amber)}.bar i.g{background:#7FB8A0}
+.lad{display:grid;grid-template-columns:1.3fr 2fr auto;gap:16px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+.lad .n{font-weight:600}.lad .s{font-size:12.5px;color:var(--steel)}
+.steps{display:flex;gap:6px}.steps span{flex:1;font-size:11.5px;padding:7px 8px;border-radius:8px;background:#E3E9EF;color:var(--steel)}
+.steps span.f{background:var(--ink);color:#fff}.steps span.nx{background:#FFE9B8;color:#5A3B00;font-weight:600}
+.lk{border:1.5px solid var(--ink);background:transparent;border-radius:8px;padding:7px 12px;font-weight:600;font-size:13px}
+.nocg{display:grid;grid-template-columns:1.4fr 1fr;gap:20px;align-items:start}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td,th{text-align:left;padding:11px 8px;border-top:1px solid var(--line)}th{font-size:12.5px;color:var(--steel);font-weight:600;border:0}
+tr.pk{cursor:pointer}tr.pk:hover{background:#EEF3F7}tr.on{background:#E3EBF3}
+.cert{background:#fff;border:2px solid var(--ink);border-radius:6px;padding:26px;position:sticky;top:20px;text-align:center}
+.cert h3{font-size:20px}.cert .no{font-family:'Bricolage Grotesque',system-ui;font-weight:700;margin:6px 0 14px;color:var(--red)}
+.cert dl{text-align:left;font-size:13.5px;margin:14px 0}.cert dt{color:var(--steel);font-size:12px;margin-top:8px}
+.qr{display:inline-grid;grid-template-columns:repeat(9,10px);gap:1px;padding:8px;border:1.5px solid var(--ink)}.qr b{width:10px;height:10px;background:#E8EDF2}.qr b.k{background:var(--ink)}
+@media(max-width:900px){.lad,.nocg{grid-template-columns:1fr}}
+@media(max-width:900px){#login{grid-template-columns:1fr}.hero{padding:32px}main{grid-template-columns:1fr;padding:18px}.detail{position:static}}
+@media(prefers-reduced-motion:reduce){.hero .burn{animation:none;width:60%}}
+</style></head><body>
+
+<section id="login">
+  <div class="hero">
+    <svg class="plan" viewBox="0 0 600 800" preserveAspectRatio="xMidYMid slice" fill="none" stroke="#9FB2C5" stroke-width="2"><path d="M40 60h520v300H300v200h260v180H40zM40 360h180M220 60v300M300 560v180M420 60v120h140M120 560h120v180"/><circle cx="470" cy="270" r="36"/><circle cx="130" cy="210" r="22"/></svg>
+    <div class="brand"><i></i>FUSE</div>
+    <div>
+      <h1>Every NOC application has a fuse.</h1>
+      <p>FUSE watches each fire safety application from filing to certificate, and warns the officer while there is still time to act.</p>
+      <div class="fusedemo"><div class="lbl"><span>Application received</span><span>Statutory deadline</span></div><div class="track"><div class="burn"></div></div></div>
+    </div>
+    <small style="color:#6F859A">Prototype build. All data shown is demo data.</small>
+  </div>
+  <div class="login-side">
+    <form id="lf" onsubmit="openDesk();return false">
+      <h2>Open your desk</h2>
+      <p class="sub">Sign in with your fire station officer ID.</p>
+      <label for="oid">Officer ID</label><input id="oid" value="FSO-2041" autocomplete="off">
+      <label for="pw">Passcode</label><input id="pw" type="password" value="demo1234">
+      <label for="st">Station</label>
+      <select id="st"><option>Anna Nagar Fire Station</option><option>Egmore Fire Station</option><option>Adyar Fire Station</option></select>
+      <button class="btn" type="button" onclick="openDesk()">Open my desk</button><p id="err" class="note" style="color:#D7263D;font-weight:600"></p><noscript><p class="note" style="color:#D7263D">JavaScript is turned off. Open this file in Chrome or Edge.</p></noscript>
+      <p class="note">Any ID works in this demo. In the full app, sign-in will use the department’s government SSO.</p>
+    </form>
+  </div>
+</section>
+
+<section id="desk" class="hide">
+  <nav aria-label="Main"><span class="dot"></span>
+    <button id="nv-desk" class="on" onclick="show('desk')"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Desk</button>
+    <button id="nv-alerts" onclick="show('alerts')"><svg viewBox="0 0 24 24"><path d="M12 3l9 16H3zM12 10v4"/></svg>Alerts</button>
+    <button id="nv-nocs" onclick="show('nocs')"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6"/></svg>NOCs</button>
+  </nav>
+  <main id="v-desk">
+    <div class="top">
+      <div><small id="who"></small><h2>Today’s fuse board</h2></div>
+      <div class="tabs" id="tabs"></div>
+    </div>
+    <div class="board" id="board"></div>
+    <aside class="detail" id="detail"></aside>
+  </main>
+  <main id="v-alerts" class="single hide"></main>
+  <main id="v-nocs" class="single hide"></main>
+</section>
+<div id="toast" role="status"></div>
+
+<script>
+let apps=[],sel=1,flt='All';
+const cls=a=>a.band=='Critical'?'crit':a.band=='Watch'?'watch':a.band=='Issued'?'done':'ok';
+const $=id=>document.getElementById(id);
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2400)}
+/* Fallback demo engine (mirrors the C++ risk engine) so the page also works when opened directly as a file */
+const D=(id,name,type,addr,stage,left,total,follow,hz,insp,docs)=>({id,name,type,addr,stage,left,total,follow,hz,insp,issued:false,docs:docs.map(d=>({n:d[0],ok:!!d[1]}))});
+const LOCAL=[
+D(1,'Sunrise Multispecialty Hospital','Hospital, 120 beds','Anna Nagar, Chennai','Document scrutiny',2,30,0,1,0,[['Building plan approval',1],['Fire safety plan',1],['Sprinkler test report',0],['Electrical safety certificate',0],['Evacuation drill record',0]]),
+D(2,'Metro Grand Cinema','Cinema, 4 screens','T. Nagar, Chennai','Site inspection due',5,30,1,1,0,[['Building plan approval',1],['Fire safety plan',1],['Exit signage photos',1],['Fire extinguisher AMC',0]]),
+D(3,'Lakshmi Textile Godown','Warehouse, 8,000 sq ft','Ambattur, Chennai','Follow-up with applicant',9,30,0,1,1,[['Building plan approval',1],['Fire safety plan',1],['Hydrant layout',0],['Storage inventory list',1]]),
+D(4,'Greenleaf Public School','School, 900 students','Velachery, Chennai','Ready for NOC',12,30,2,0,1,[['Building plan approval',1],['Fire safety plan',1],['Evacuation drill record',1],['Alarm system test',1]]),
+D(5,'Orchid Residency Tower','Residential, 14 floors','Adyar, Chennai','Site inspection done',18,45,1,0,1,[['Building plan approval',1],['Fire safety plan',1],['Refuge area photos',1],['Lift fireman-switch test',0]]),
+D(6,'Bay Spice Restaurant','Restaurant, 60 seats','Besant Nagar, Chennai','Document scrutiny',21,30,0,0,0,[['Trade licence',1],['Gas bank safety report',1],['Kitchen hood inspection',1]])];
+function localApps(){return LOCAL.map(a=>{const m=a.docs.filter(d=>!d.ok).length,el=1-a.left/a.total;let r=0,w=[];
+ if(a.left<=3){r+=40;w.push(`Only ${a.left} days left before the statutory deadline`)}else if(a.left<=7){r+=25;w.push(`${a.left} days left, inside the 7-day warning window`)}else if(el>.5){r+=10;w.push('More than half of the time limit has been used')}
+ if(m){r+=Math.min(30,m*10);w.push(`${m} required document(s) still missing`)}
+ if(a.hz){r+=15;w.push('High-occupancy or hazardous use, so it gets priority')}
+ if(a.follow==0&&el>.3){r+=10;w.push('No follow-up has been sent to the applicant')}
+ if(!a.insp){r+=10;w.push('Site inspection not completed')}
+ r=Math.min(r,100);let band=r>=70?'Critical':r>=40?'Watch':'On track';
+ if(a.issued){r=0;band='Issued';w=['NOC issued and logged']}
+ return {id:a.id,name:a.name,type:a.type,addr:a.addr,stage:a.issued?'NOC issued':a.stage,left:a.left,total:a.total,follow:a.follow,inspected:!!a.insp,risk:r,band,missing:m,why:w,docs:a.docs}})}
+async function load(){
+  try{const r=await fetch('/api/apps');if(!r.ok)throw 0;apps=await r.json();window.live=true}
+  catch(e){apps=localApps();window.live=false}
+  apps.sort((a,b)=>b.risk-a.risk||a.left-b.left);draw();drawAlerts();drawNocs()}
+function draw(){
+  const bands=['All','Critical','Watch','On track','Issued'];
+  $('tabs').innerHTML=bands.map(b=>`<button class="tab ${b==flt?'on':''}" onclick="flt='${b}';draw()">${b}<b>${b=='All'?apps.length:apps.filter(a=>a.band==b).length}</b></button>`).join('');
+  const list=apps.filter(a=>flt=='All'||a.band==flt);
+  $('board').innerHTML=list.map(a=>{const used=Math.round((1-a.left/a.total)*100);
+    return `<button class="row ${cls(a)} ${a.id==sel?'sel':''}" onclick="sel=${a.id};draw()">
+    <div class="h"><div><div class="n">${a.name}</div><div class="s">${a.stage}, ${a.missing} document${a.missing==1?'':'s'} missing</div></div>
+    <div class="days">${a.band=='Issued'?'Done':a.left}<small>${a.band=='Issued'?'':'days left'}</small></div></div>
+    <div class="track"><div class="burn" style="width:${a.band=='Issued'?100:used}%"></div></div></button>`}).join('')||'<p class="meta">No applications in this band.</p>';
+  const a=apps.find(x=>x.id==sel)||apps[0];if(!a)return;
+  const can=a.missing==0&&a.inspected&&a.band!='Issued';
+  const fired=[7,3,1].map(d=>a.left<=d);
+  $('detail').innerHTML=`<span class="pill ${cls(a)}">${a.band}</span>
+  <h3 style="margin-top:12px">${a.name}</h3><p class="meta">${a.type} at ${a.addr}</p>
+  <div class="why"><span class="sc">Risk score ${a.risk} of 100</span>Why FUSE flagged this:<ul>${a.why.map(w=>`<li>${w}</li>`).join('')}</ul></div>
+  <div class="sec"><h4>Document checklist</h4><ul class="chk">${a.docs.map(d=>`<li><span class="tick ${d.ok?'y':'n'}">${d.ok?'✓':'!'}</span>${d.n}</li>`).join('')}
+  <li><span class="tick ${a.inspected?'y':'n'}">${a.inspected?'✓':'!'}</span>Site inspection report</li></ul></div>
+  <div class="sec"><h4>Automatic nudges (${a.follow} sent so far)</h4>
+  <div class="nudge"><span class="${fired[0]?'fired':''}">7 days: applicant</span><span class="${fired[1]?'fired':''}">3 days: applicant and officer</span><span class="${fired[2]?'fired':''}">1 day: station chief</span></div></div>
+  <div class="acts"><button onclick="act('remind',${a.id})" ${a.band=='Issued'?'disabled':''}>Send reminder</button>
+  <button class="pri" onclick="act('issue',${a.id})" ${can?'':'disabled'}>Issue NOC</button></div>
+  <p class="hint">${a.band=='Issued'?'This NOC has been issued.':can?'Checklist complete. You can issue the NOC.':'Issue NOC unlocks when every document and the site inspection are complete.'}</p>`;
+}
+async function act(k,id){let ok;
+  if(window.live){try{ok=(await fetch(`/api/${k}?id=${id}`,{method:'POST'})).ok}catch(e){ok=false}}
+  else{const a=LOCAL.find(x=>x.id==id);if(k=='remind'){a.follow++;ok=true}else if(a.docs.some(d=>!d.ok)||!a.insp)ok=false;else{a.issued=true;ok=true}}
+  toast(ok?(k=='issue'?'NOC issued and logged':'Reminder sent to applicant'):'Action blocked: checklist incomplete');load()}
+
+function show(v){['desk','alerts','nocs'].forEach(k=>{$('v-'+k).classList.toggle('hide',k!=v);$('nv-'+k).classList.toggle('on',k==v)});window.scrollTo(0,0)}
+function openCase(id){sel=id;flt='All';show('desk');draw()}
+const PIPE=[1,2,2,3,5,5,6,6,7,9,9,10,12,12,13,15,18,18,19,21,21];
+function drawAlerts(){
+ const live=apps.filter(a=>a.band!='Issued');
+ const cnt=Array.from({length:21},(_,i)=>PIPE.filter(d=>d==i+1).length+live.filter(a=>a.left==i+1).length),mx=Math.max(...cnt,1);
+ const who=['Applicant','Applicant and officer','Station chief'];
+ $('v-alerts').innerHTML=`<div class="top"><div><small>Next 21 days, whole district</small><h2>Alerts and escalations</h2></div></div>
+ <div class="panel"><h4>Deadline load</h4><p class="hint">Each bar counts the applications whose legal time limit ends on that day. Tall red bars mean you need extra inspectors early.</p>
+ <div class="bars">${cnt.map((c,i)=>`<div class="bar" title="${c} due in ${i+1} day(s)"><i class="${i<3?'r':i<7?'a':'g'}" style="height:${c/mx*100}%"></i>${i+1}</div>`).join('')}</div>
+ <p class="hint">Days from today. Includes 21 other district applications (demo data).</p></div>
+ <div class="panel"><h4>Escalation ladder</h4><p class="hint">Reminders go out automatically. The next one that will fire is highlighted.</p>
+ ${live.map(a=>{const nx=[7,3,1].find(d=>a.left>d);const p=Math.min(97,Math.round(a.risk*.92));
+  return `<div class="lad"><div><div class="n">${a.name}</div><div class="s">${p}% chance of missing the deadline, ${a.left} days left</div></div>
+  <div class="steps">${[7,3,1].map((d,i)=>`<span class="${a.left<=d?'f':d==nx?'nx':''}">${d}-day: ${who[i]}${a.left<=d?' (sent)':d==nx?` (in ${a.left-d} days)`:''}</span>`).join('')}</div>
+  <button class="lk" onclick="openCase(${a.id})">Open case</button></div>`}).join('')}</div>`}
+const DAY=864e5,fmt=t=>new Date(t).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+const NOCS=[['FS/CHN/2026/0188','Star Plaza Mall','Shopping mall',-340],['FS/CHN/2026/0153','Kaveri Hospital','Hospital',-300],['FS/CHN/2026/0121','Royal Banquet Hall','Banquet hall',-250],['FS/CHN/2026/0302','Techpark Block C','Office complex',-359],['FS/CHN/2026/0377','St. Mary’s School','School',-120]];
+let selN=0;
+function drawNocs(){
+ const rows=NOCS.map(r=>({no:r[0],name:r[1],type:r[2],iss:Date.now()+r[3]*DAY}));
+ apps.filter(a=>a.band=='Issued').forEach((a,i)=>rows.push({no:'FS/CHN/2026/04'+(10+a.id),name:a.name,type:a.type,iss:Date.now()}));
+ rows.forEach(r=>{r.exp=r.iss+365*DAY;r.left=Math.round((r.exp-Date.now())/DAY)});rows.sort((a,b)=>a.left-b.left);
+ selN=Math.min(selN,rows.length-1);const c=rows[selN];
+ const hash=[...c.no].reduce((h,ch)=>(h*31+ch.charCodeAt(0))>>>0,7);
+ const qr=Array.from({length:81},(_,i)=>`<b class="${((hash>>>(i%28))+i*7+(i%9)*(i/9|0))%3==0||[0,1,2,9,10,11,18,19,20].includes(i)?'k':''}"></b>`).join('');
+ const st=l=>l<=30?['crit','Renew now']:l<=90?['watch','Renewal due']:['ok','Valid'];
+ $('v-nocs').innerHTML=`<div class="top"><div><small>Certificates issued by this station</small><h2>NOC register and renewals</h2></div></div>
+ <div class="nocg"><div class="panel"><h4>Renewal radar</h4><p class="hint">Every NOC is tracked until it expires, so a building never runs uncovered without anyone noticing.</p>
+ <table><tr><th>Building</th><th>Valid until</th><th>Status</th></tr>${rows.map((r,i)=>`<tr class="pk ${i==selN?'on':''}" onclick="selN=${i};drawNocs()"><td><b>${r.name}</b><br><span class="s" style="font-size:12px;color:var(--steel)">${r.type}</span></td><td>${fmt(r.exp)}<br><span style="font-size:12px;color:var(--steel)">${r.left} days left</span></td><td><span class="pill ${st(r.left)[0]}">${st(r.left)[1]}</span></td></tr>`).join('')}</table></div>
+ <div class="cert"><p style="font-size:12px;color:var(--steel)">Fire Department</p><h3>No Objection Certificate</h3><div class="no">${c.no}</div>
+ <div class="qr">${qr}</div><p class="hint">Scan to verify this certificate is genuine. Code FUSE-${hash.toString(16).toUpperCase()}</p>
+ <dl><dt>Issued to</dt><dd>${c.name}</dd><dt>Issued on</dt><dd>${fmt(c.iss)}</dd><dt>Valid until</dt><dd>${fmt(c.exp)}</dd></dl>
+ <button class="lk" onclick="toast('Renewal notice sent to ${c.name.replace(/'/g,'')}')">Send renewal notice</button></div></div>`}
+async function openDesk(){
+  try{
+    $('who').textContent=`${$('oid').value}, ${$('st').value}`;
+    await load();
+    $('login').classList.add('hide');$('desk').classList.remove('hide');window.scrollTo(0,0);
+  }catch(e){$('err').textContent='Could not open the desk: '+e.message}
+}
+</script></body></html>
